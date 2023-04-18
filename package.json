@@ -24,12 +24,11 @@
     "fastify-cli": "^5.7.1",
     "fastify-plugin": "^4.0.0",
     "is-url": "^1.2.4",
-    "shortid": "^2.2.16"
+    "nanoid": "^3.3.6"
   },
   "devDependencies": {
     "@types/is-url": "^1.2.30",
     "@types/node": "^18.0.0",
-    "@types/shortid": "^0.0.29",
     "@types/tap": "^15.0.5",
     "concurrently": "^7.0.0",
     "fastify-tsconfig": "^1.0.1",
