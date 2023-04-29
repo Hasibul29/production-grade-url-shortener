@@ -1,4 +1,4 @@
-import fp from 'fastify-plugin'
+import fp from 'fastify-plugin';
 
 export interface SupportPluginOptions {
   // Specify Support plugin options here

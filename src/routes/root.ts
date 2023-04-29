@@ -6,9 +6,18 @@ interface RequestParam {
     short: string;
 }
 
-const urlStorage: Record<string, string> = {};
+interface UrlResponce {
+    Original_url: string;
+    Short_url: string;
+}
+
+export const urlStorage: Record<string, string> = {};
 
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+    fastify.get('/', async (request, reply) => {
+        return 'Welcome';
+    });
+
     fastify.post('/', async (request, reply) => {
         const givenUrl: string = request.body as string;
         const isValid: boolean = isUrl(givenUrl);
@@ -27,10 +36,13 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         if (!id) {
             reply.code(400).send('Invalid url');
         }
+        if (!urlStorage[id.short]) {
+            return 'Invalid url';
+        }
         return {
-            'long-url': urlStorage[id.short],
-            'short-url ': `${request.protocol}://${request.hostname}/${id.short}`,
-        };
+            Original_url: urlStorage[id.short],
+            Short_url: `${request.protocol}://${request.hostname}/${id.short}`,
+        } as UrlResponce;
     });
 };
 
