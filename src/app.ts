@@ -1,6 +1,8 @@
 import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
+import fastifyPostgres from '@fastify/postgres';
 import { FastifyPluginAsync } from 'fastify';
 import { join } from 'path';
+require('dotenv').config();
 
 export type AppOptions = {
     // Place your custom options for app below here.
@@ -14,7 +16,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
     opts
 ): Promise<void> => {
     // Place here your custom code!
-
+    void fastify.register(fastifyPostgres, {
+        connectionString: process.env.SECRET as string,
+    });
     // Do not touch the following lines
 
     // This loads all plugins defined in plugins
