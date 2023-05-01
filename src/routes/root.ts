@@ -6,12 +6,12 @@ interface RequestParam {
     short: string;
 }
 
-interface UrlResponce {
-    Original_url: string;
-    Short_url: string;
-}
+// interface UrlResponse {
+//     originalUrl: string;
+//     shortUrl: string;
+// }
 
-export const urlStorage: Record<string, string> = {};
+export const urlStorage: Map<string, string> = new Map<string, string>();
 
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async (request, reply) => {
@@ -27,7 +27,7 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             return reply.code(400).send('Invalid url');
         }
 
-        urlStorage[key] = givenUrl;
+        urlStorage.set(key, givenUrl);
         return `${request.protocol}://${request.hostname}${request.url}${key}`;
     });
 
@@ -36,13 +36,14 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         if (!id) {
             reply.code(400).send('Invalid url');
         }
-        if (!urlStorage[id.short]) {
+        if (!urlStorage.has(id.short)) {
             return 'Invalid url';
         }
-        return {
-            Original_url: urlStorage[id.short],
-            Short_url: `${request.protocol}://${request.hostname}/${id.short}`,
-        } as UrlResponce;
+        reply.redirect(urlStorage.get(id.short) as string);
+        // return {
+        //     originalUrl: urlStorage.get(id.short),
+        //     shortUrl: `${request.protocol}://${request.hostname}/${id.short}`,
+        // } as UrlResponse;
     });
 };
 
