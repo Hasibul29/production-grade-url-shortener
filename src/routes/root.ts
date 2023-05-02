@@ -30,12 +30,12 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         const userId = 1; //for now
         try {
             if (userLoggedIn) {
-                client.query(
+                await client.query(
                     'Insert into Urls(user_id,short_url,original_url,time_limit) Values($1,$2,$3,$4)',
                     [userId, key, givenUrl, timeLimit] // not sure how to do
                 );
             } else {
-                client.query(
+                await client.query(
                     'Insert into Urls(short_url,original_url,time_limit) Values($1,$2,$3)',
                     [key, givenUrl, timeLimit]
                 );

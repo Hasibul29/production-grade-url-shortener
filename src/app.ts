@@ -17,7 +17,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 ): Promise<void> => {
     // Place here your custom code!
     void fastify.register(fastifyPostgres, {
-        connectionString: process.env.SECRET as string,
+        connectionString: 'postgres://postgres:Hasib@127.0.0.1:5432/url',
     });
     // Do not touch the following lines
 
