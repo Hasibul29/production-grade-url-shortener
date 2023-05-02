@@ -22,8 +22,11 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/autoload": "^5.0.0",
+    "@fastify/passport": "^2.3.0",
     "@fastify/postgres": "^5.2.0",
+    "@fastify/secure-session": "^6.1.0",
     "@fastify/sensible": "^5.0.0",
+    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.17.0",
     "fastify-cli": "^5.7.1",
@@ -33,6 +36,7 @@
     "pg": "^8.10.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/is-url": "^1.2.30",
     "@types/node": "^18.0.0",
     "@types/pg": "^8.6.6",
