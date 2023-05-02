@@ -17,10 +17,10 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
         try {
             const userData = await client.query(
-                'Select * From Users Where email = $1',
+                'Select password_hash From Users Where email = $1',
                 [email]
             );
-            if (!userData) {
+            if (!userData.rows[0]) {
                 return "User Doesn't Exist";
             } else {
                 const hashedPassword = userData.rows[0].password_hash;
