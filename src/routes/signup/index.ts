@@ -23,11 +23,16 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
         const client = await fastify.pg.connect();
 
-        await client.query(
-            'INSERT INTO Users(email,password_hash,password_salt) VALUES ($1, $2, $3)',
-            [email, hashedPassword, salt]
-        );
-
+        try {
+            await client.query(
+                'INSERT INTO Users(email,password_hash,password_salt) VALUES ($1, $2, $3)',
+                [email, hashedPassword, salt]
+            );
+        } catch (err) {
+            console.log('There Is an error', err);
+        } finally {
+            client.release();
+        }
         return 'Registration Complete';
     });
 };
