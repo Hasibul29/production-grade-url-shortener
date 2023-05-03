@@ -34,7 +34,7 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 [email, hashedPassword, salt]
             );
         } catch (err) {
-            console.log('There Is an error', err);
+            return err;
         } finally {
             client.release();
         }

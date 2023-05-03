@@ -7,7 +7,10 @@ interface RequestParam {
     short: string;
 }
 
-export const urlStorage: Map<string, string> = new Map<string, string>();
+interface UrlRequest {
+    url: string;
+    alias?: string;
+}
 
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async (request, reply) => {
@@ -15,38 +18,39 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     });
 
     fastify.post('/', async (request, reply) => {
-        const givenUrl: string = request.body as string;
-        const isValid: boolean = isUrl(givenUrl);
-        const key: string = await nanoid(5);
+        const givenUrl = request.body as UrlRequest;
+        const isValid: boolean = isUrl(givenUrl.url);
+        const userLoggedIn = true; //for now
+        const userId = 1; //for now
+        const key: string =
+            givenUrl.alias && userLoggedIn ? givenUrl.alias : await nanoid(5);
 
-        if (!givenUrl || !isValid) {
+        if (!givenUrl.url || !isValid) {
             return reply.code(400).send('Invalid url');
         }
 
         const timeLimit = format(addMonths(Date.now(), 2), 'yyyy-MM-dd');
         const client = await fastify.pg.connect();
 
-        const userLoggedIn = true; //for now
-        const userId = 1; //for now
         try {
             if (userLoggedIn) {
-                await client.query(
+                const user = await client.query(
                     'Insert into Urls(user_id,short_url,original_url,time_limit) Values($1,$2,$3,$4)',
-                    [userId, key, givenUrl, timeLimit] // not sure how to do
+                    [userId, key, givenUrl.url, timeLimit] // not sure how to do
                 );
+                return user;
             } else {
                 await client.query(
                     'Insert into Urls(short_url,original_url,time_limit) Values($1,$2,$3)',
-                    [key, givenUrl, timeLimit]
+                    [key, givenUrl.url, timeLimit]
                 );
             }
         } catch (err) {
-            console.log('There is an error ', err);
+            return err;
         } finally {
             client.release();
         }
         const generatedUrl = `${request.protocol}://${request.hostname}${request.url}${key}`;
-        urlStorage.set(key, givenUrl);
         return generatedUrl;
     });
 
@@ -70,7 +74,7 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 return 'Url was not found';
             }
         } catch (err) {
-            console.log('There was an error ', err);
+            return err;
         } finally {
             client.release();
         }

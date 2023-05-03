@@ -40,11 +40,10 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 }
             }
         } catch (err) {
-            console.log('There Is an error', err);
+            return err;
         } finally {
             client.release();
         }
-        return request.body;
     });
 };
 
