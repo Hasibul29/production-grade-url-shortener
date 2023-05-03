@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import * as EmailValidator from 'email-validator';
 import { FastifyPluginAsync } from 'fastify';
 
 interface LoginRequest {
@@ -12,6 +13,10 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     });
     fastify.post('/', async function (request, reply) {
         const { email, password } = request.body as LoginRequest;
+
+        if (!EmailValidator.validate(email)) {
+            return 'Invalid email address';
+        }
 
         const client = await fastify.pg.connect();
 

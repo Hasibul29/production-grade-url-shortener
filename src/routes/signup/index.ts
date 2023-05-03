@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import * as EmailValidator from 'email-validator';
 import { FastifyPluginAsync } from 'fastify';
 
 interface UserInfo {
@@ -13,6 +14,10 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     });
     fastify.post('/', async function (request, reply) {
         const { email, password, confirmPassword } = request.body as UserInfo;
+
+        if (!EmailValidator.validate(email)) {
+            return 'Invalid email address';
+        }
 
         if (password != confirmPassword) {
             return "Password Didn't Match";
