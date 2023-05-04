@@ -2,13 +2,13 @@ import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
 import fastifyPassport from '@fastify/passport';
 import fastifyPostgres from '@fastify/postgres';
 import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
 import { FastifyPluginAsync } from 'fastify';
 import * as fs from 'fs';
 import { join } from 'path';
 import fastifySecureSession = require('@fastify/secure-session');
-require('dotenv').config();
+dotenv.config();
 const LocalStrategy = require('passport-local').Strategy;
-
 export type AppOptions = {
     // Place your custom options for app below here.
 } & Partial<AutoloadPluginOptions>;
@@ -23,7 +23,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     // Place here your custom code!
 
     void fastify.register(fastifyPostgres, {
-        connectionString: 'postgres://postgres:Hasib@127.0.0.1:5432/url',
+        connectionString: process.env.PASS,
     });
 
     void fastify.register(fastifySecureSession, {
