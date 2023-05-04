@@ -1,14 +1,15 @@
 import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
 import fastifyPassport from '@fastify/passport';
 import fastifyPostgres from '@fastify/postgres';
-import * as bcrypt from 'bcrypt';
+import { fastifySecureSession } from '@fastify/secure-session';
 import * as dotenv from 'dotenv';
 import { FastifyPluginAsync } from 'fastify';
 import * as fs from 'fs';
 import { join } from 'path';
-import fastifySecureSession = require('@fastify/secure-session');
+import { configurePassport } from './passport';
+
 dotenv.config();
-const LocalStrategy = require('passport-local').Strategy;
+
 export type AppOptions = {
     // Place your custom options for app below here.
 } & Partial<AutoloadPluginOptions>;
@@ -32,46 +33,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
     void fastify.register(fastifyPassport.initialize());
     void fastify.register(fastifyPassport.secureSession());
 
-    fastifyPassport.use(
-        new LocalStrategy(async function (
-            email: string,
-            password: string,
-            done: (error: any, user?: any) => void
-        ) {
-            const client = await fastify.pg.connect();
-            try {
-                const userData = await client.query(
-                    'select * from users where email = $1',
-                    [email]
-                );
-                if (!userData.rows[0]) {
-                    return done(null, false);
-                } else {
-                    const hashedPassword = userData.rows[0].password_hash;
-                    const isPasswordCorrect = await bcrypt.compare(
-                        password,
-                        hashedPassword
-                    );
-                    const user = userData.rows[0].user_id;
-                    if (isPasswordCorrect) {
-                        return done(null, user);
-                    } else {
-                        return done(null, false);
-                    }
-                }
-            } catch (err) {
-                return done(err);
-            } finally {
-                client.release();
-            }
-        })
-    );
+    // pasport strategy
+    configurePassport(fastify, opts);
 
-    // register a serializer that stores the user object's id in the session ...
-    fastifyPassport.registerUserSerializer(async (user, request) => user);
-    fastifyPassport.registerUserDeserializer(async (user, request) => {
-        return await user;
-    });
     // ... and then a deserializer that will fetch that user from the database when a request with an id in the session arrives
     // fastifyPassport.registerUserDeserializer(async (id, request) => {
     // return await User.findById(id);
