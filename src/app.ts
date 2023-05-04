@@ -4,8 +4,8 @@ import fastifyPostgres from '@fastify/postgres';
 import { fastifySecureSession } from '@fastify/secure-session';
 import * as dotenv from 'dotenv';
 import { FastifyPluginAsync } from 'fastify';
-import * as fs from 'fs';
-import { join } from 'path';
+import * as fs from 'node:fs';
+import { join } from 'node:path';
 import { configurePassport } from './passport';
 
 dotenv.config();
@@ -22,6 +22,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     opts
 ): Promise<void> => {
     // Place here your custom code!
+    fastify.register(require(join(__dirname, 'checkrequired.js')));
 
     void fastify.register(fastifyPostgres, {
         connectionString: process.env.PASS,
