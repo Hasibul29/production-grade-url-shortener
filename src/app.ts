@@ -22,8 +22,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     opts
 ): Promise<void> => {
     // Place here your custom code!
-    fastify.register(require(join(__dirname, 'checkrequired.js')));
-
     void fastify.register(fastifyPostgres, {
         connectionString: process.env.PASS,
     });
