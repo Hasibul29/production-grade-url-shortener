@@ -20,8 +20,13 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.post('/', async (request, reply) => {
         const givenUrl = request.body as UrlRequest;
         const isValid: boolean = isUrl(givenUrl.url);
-        const userLoggedIn = true; //for now
-        const userId = 1; //for now
+        let userLoggedIn = false;
+        const userId = request.user;
+
+        if (userId) {
+            userLoggedIn = true;
+        }
+
         const key: string =
             givenUrl.alias && userLoggedIn ? givenUrl.alias : await nanoid(5);
 
@@ -35,12 +40,12 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         try {
             if (userLoggedIn) {
                 await client.query(
-                    'Insert into Urls(user_id,short_url,original_url,time_limit) Values($1,$2,$3,$4)',
-                    [userId, key, givenUrl.url, timeLimit] // not sure how to do
+                    'insert into urls(user_id,short_url,original_url,time_limit) values($1,$2,$3,$4)',
+                    [userId, key, givenUrl.url, timeLimit]
                 );
             } else {
                 await client.query(
-                    'Insert into Urls(short_url,original_url,time_limit) Values($1,$2,$3)',
+                    'insert into urls(short_url,original_url,time_limit) values($1,$2,$3)',
                     [key, givenUrl.url, timeLimit]
                 );
             }

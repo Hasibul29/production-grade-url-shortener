@@ -7,7 +7,7 @@ interface RequestParams {
 const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
         const client = await fastify.pg.connect();
-        const userId = 1; //for now
+        const userId = request.user;
         try {
             const usersUrls = await client.query(
                 'select * from urls where user_id=$1',
@@ -19,7 +19,7 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     originalUrl: el.original_url,
                 }));
             } else {
-                return 'Empty';
+                return "You don't have any URLS";
             }
         } catch (err) {
             return err;
@@ -29,6 +29,8 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     });
 
     fastify.delete('/:short', async function (request, reply) {
+        if (!request.user) return 'Please Login to Delete';
+
         const url = request.params as RequestParams;
         const shortUrl = url.short;
 
@@ -36,24 +38,23 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
         try {
             const deleted = await client.query(
-                'Delete from urls where short_url=$1',
+                'delete from urls where short_url=$1',
                 [shortUrl]
             );
             if (deleted.rowCount) {
                 return 'URL Removed';
             } else {
-                return 'Url not found';
+                return 'URL not found';
             }
         } catch (err) {
             return err;
         } finally {
             client.release();
         }
-
-        return shortUrl;
     });
 
     fastify.put('/:short', async function (request, reply) {
+        if (!request.user) return 'Please Login to Update';
         const url = request.params as RequestParams;
         const shortUrl = url.short;
         const updatedUrl = request.body;
@@ -67,15 +68,13 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             if (updated.rowCount) {
                 return 'URL Updated';
             } else {
-                return 'Url not found';
+                return 'URL not found';
             }
         } catch (err) {
             return err;
         } finally {
             client.release();
         }
-
-        return shortUrl;
     });
 };
 

@@ -1,10 +1,10 @@
 import fastifyPassport from '@fastify/passport';
 import { FastifyPluginAsync } from 'fastify';
 
-interface LoginRequest {
-    email: string;
-    password: string;
-}
+// interface LoginRequest {
+//     email: string;
+//     password: string;
+// }
 
 const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
@@ -20,7 +20,7 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             }),
         },
         async function (request, reply) {
-            return request.body as LoginRequest;
+            return request.user;
             //     const { email, password } = request.body as LoginRequest;
 
             //     if (!EmailValidator.validate(email)) {
@@ -31,7 +31,7 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
             //     try {
             //         const userData = await client.query(
-            //             'Select password_hash From Users Where email = $1',
+            //             'select password_hash from ysers where email = $1',
             //             [email]
             //         );
             //         if (!userData.rows[0]) {

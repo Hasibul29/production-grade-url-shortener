@@ -10,7 +10,7 @@ interface UserInfo {
 
 const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
-        return 'signup';
+        return 'signup here';
     });
     fastify.post('/', async function (request, reply) {
         const { email, password, confirmPassword } = request.body as UserInfo;
@@ -30,7 +30,7 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
         try {
             await client.query(
-                'INSERT INTO Users(email,password_hash,password_salt) VALUES ($1, $2, $3)',
+                'insert into users(email,password_hash,password_salt) values ($1, $2, $3)',
                 [email, hashedPassword, salt]
             );
         } catch (err) {

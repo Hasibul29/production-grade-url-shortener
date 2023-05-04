@@ -38,12 +38,10 @@ const app: FastifyPluginAsync<AppOptions> = async (
             password: string,
             done: (error: any, user?: any) => void
         ) {
-            console.log(email);
             const client = await fastify.pg.connect();
-
             try {
                 const userData = await client.query(
-                    'Select password_hash From Users Where email = $1',
+                    'select * from users where email = $1',
                     [email]
                 );
                 if (!userData.rows[0]) {
@@ -54,8 +52,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
                         password,
                         hashedPassword
                     );
+                    const user = userData.rows[0].user_id;
                     if (isPasswordCorrect) {
-                        return done(null, userData.rows[0]);
+                        return done(null, user);
                     } else {
                         return done(null, false);
                     }
@@ -67,6 +66,16 @@ const app: FastifyPluginAsync<AppOptions> = async (
             }
         })
     );
+
+    // register a serializer that stores the user object's id in the session ...
+    fastifyPassport.registerUserSerializer(async (user, request) => user);
+    fastifyPassport.registerUserDeserializer(async (user, request) => {
+        return await user;
+    });
+    // ... and then a deserializer that will fetch that user from the database when a request with an id in the session arrives
+    // fastifyPassport.registerUserDeserializer(async (id, request) => {
+    // return await User.findById(id);
+    // });
     // Do not touch the following lines
 
     // This loads all plugins defined in plugins
