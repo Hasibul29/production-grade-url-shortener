@@ -7,7 +7,7 @@ export const createUserDtoSchema = {
         password: { type: 'string', maxLength: 255, minLength: 8 },
         confirmPassword: { type: 'string', maxLength: 255, minLength: 8 },
     },
-    required: ['email', 'password', 'confirm_password'],
+    required: ['email', 'password', 'confirmPassword'],
     maxProperties: 3,
     additionalProperties: false,
 } as const satisfies JSONSchema;
