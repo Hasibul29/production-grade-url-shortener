@@ -1,4 +1,4 @@
-import { addMonths, format } from 'date-fns';
+// import { addMonths, format } from 'date-fns';
 import { FastifyPluginAsync } from 'fastify';
 import { nanoid } from 'nanoid/async';
 import {
@@ -40,19 +40,19 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 return reply.code(400).send('Invalid url');
             }
 
-            const timeLimit = format(addMonths(Date.now(), 2), 'yyyy-MM-dd');
+            // const timeLimit = format(addMonths(Date.now(), 2), 'yyyy-MM-dd');
             const client = await fastify.pg.connect();
 
             try {
                 if (userLoggedIn) {
                     await client.query(
-                        'insert into urls(user_id,short_url,original_url,time_limit) values($1,$2,$3,$4)',
-                        [userId, key, givenUrl.url, timeLimit]
+                        'insert into urls(user_id,short_url,original_url) values($1,$2,$3)',
+                        [userId, key, givenUrl.url]
                     );
                 } else {
                     await client.query(
-                        'insert into urls(short_url,original_url,time_limit) values($1,$2,$3)',
-                        [key, givenUrl.url, timeLimit]
+                        'insert into urls(short_url,original_url) values($1,$2)',
+                        [key, givenUrl.url]
                     );
                 }
             } catch (err) {

@@ -12,7 +12,7 @@ CREATE TABLE Urls (
   short_url VARCHAR(255) PRIMARY KEY,
   original_url VARCHAR(2048) NOT NULL,
   creation_time TIMESTAMP NOT NULL DEFAULT NOW(),
-  total_clicked INTEGER NOT NULL
+  total_clicked INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE AccountSecurity (
