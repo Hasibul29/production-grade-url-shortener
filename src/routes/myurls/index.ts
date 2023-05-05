@@ -1,8 +1,5 @@
 import { FastifyPluginAsync } from 'fastify';
-
-interface RequestParams {
-    short: string;
-}
+import { MutateLinkDto, mutateLinkDtoSchema } from '../../userschema';
 
 const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
@@ -28,54 +25,70 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         }
     });
 
-    fastify.delete('/:short', async function (request, reply) {
-        if (!request.user) return 'Please Login to Delete';
+    fastify.delete(
+        '/:short',
+        {
+            schema: {
+                params: mutateLinkDtoSchema,
+            },
+        },
+        async function (request, reply) {
+            if (!request.user) return 'Please Login to Delete';
 
-        const url = request.params as RequestParams;
-        const shortUrl = url.short;
+            const url = request.params as MutateLinkDto;
+            const shortUrl = url.short;
 
-        const client = await fastify.pg.connect();
+            const client = await fastify.pg.connect();
 
-        try {
-            const deleted = await client.query(
-                'delete from urls where short_url=$1',
-                [shortUrl]
-            );
-            if (deleted.rowCount) {
-                return 'URL Removed';
-            } else {
-                return 'URL not found';
+            try {
+                const deleted = await client.query(
+                    'delete from urls where short_url=$1',
+                    [shortUrl]
+                );
+                if (deleted.rowCount) {
+                    return 'URL Removed';
+                } else {
+                    return 'URL not found';
+                }
+            } catch (err) {
+                return err;
+            } finally {
+                client.release();
             }
-        } catch (err) {
-            return err;
-        } finally {
-            client.release();
         }
-    });
+    );
 
-    fastify.put('/:short', async function (request, reply) {
-        if (!request.user) return 'Please Login to Update';
-        const url = request.params as RequestParams;
-        const shortUrl = url.short;
-        const updatedUrl = request.body;
-        const client = await fastify.pg.connect();
+    fastify.put(
+        '/:short',
+        {
+            schema: {
+                params: mutateLinkDtoSchema,
+            },
+        },
+        async function (request, reply) {
+            if (!request.user) return 'Please Login to Update';
+            const url = request.params as MutateLinkDto;
+            const shortUrl = url.short;
+            const updatedUrl = request.body;
+            const client = await fastify.pg.connect();
 
-        try {
-            const updated = await client.query(
-                'update urls set short_url=$1 where short_url=$2',
-                [updatedUrl, shortUrl]
-            );
-            if (updated.rowCount) {
-                return 'URL Updated';
-            } else {
-                return 'URL not found';
+            try {
+                const updated = await client.query(
+                    'update urls set short_url=$1 where short_url=$2',
+                    [updatedUrl, shortUrl]
+                );
+                if (updated.rowCount) {
+                    return 'URL Updated';
+                } else {
+                    return 'URL not found';
+                }
+            } catch (err) {
+                return err;
+            } finally {
+                client.release();
             }
-        } catch (err) {
-            return err;
-        } finally {
-            client.release();
         }
-    });
+    );
 };
 
 export default myurls;
