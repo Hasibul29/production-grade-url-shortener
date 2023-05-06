@@ -1,20 +1,42 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+# URL Shortener API built with Fastify
+
+## Install Dependencies
+
+Use [**npm**](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-package-manager-to-install-nodejs-and-npm) as the package manager. Run the following command to install the dependencies:
+
+```
+npm install
+```
+
+## Database Setup
+
+Run the SQL commands in [migration.sql](./src/database/migration.sql) file to create the database tables.
+
+To seed sample data, run the files in [seeds](./src/database/seeds) directory like this:
+
+```
+npx ts-node src/database/seeds/<file>.ts
+```
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm run dev`
+```
+npm dev
+```
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To start the app in dev mode.
 
-### `npm start`
+```
+npm start
+```
 
 For production mode
 
-### `npm run test`
+```
+npm test
+```
 
 Run the test cases.
 
