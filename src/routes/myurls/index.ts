@@ -3,8 +3,15 @@ import { MutateLinkDto, mutateLinkDtoSchema } from '../../userschema';
 
 const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
-        const client = await fastify.pg.connect();
         const userId = request.user;
+
+        if (!userId) {
+            return reply
+                .code(401)
+                .send({ success: false, message: 'User not Logged In' });
+        }
+
+        const client = await fastify.pg.connect();
         try {
             const usersUrls = await client.query(
                 'select * from urls where user_id=$1',
