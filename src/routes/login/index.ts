@@ -4,7 +4,7 @@ import { loginUserDtoSchema } from '../../userschema';
 
 const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
-        return 'login Page';
+        return { success: true, message: 'login page' };
     });
     fastify.post(
         '/',
@@ -16,9 +16,10 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 },
                 async (request, reply, _, user) => {
                     if (!user) {
-                        return reply
-                            .code(401)
-                            .send({ massage: 'Invalid Email or Password' });
+                        return reply.code(401).send({
+                            success: false,
+                            message: 'Invalid Email or Password',
+                        });
                     }
                     request.login(user);
                 }
@@ -28,7 +29,9 @@ const login: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             },
         },
         async function (request, reply) {
-            return reply.redirect('/myurls');
+            return reply
+                .code(200)
+                .send({ success: true, message: 'Login Success' });
         }
     );
 };

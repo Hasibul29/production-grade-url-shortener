@@ -19,11 +19,15 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 request.body as CreateUserDto;
 
             if (!EmailValidator.validate(email)) {
-                return 'Invalid email address';
+                return reply
+                    .code(400)
+                    .send({ success: false, message: 'Invalid email address' });
             }
 
-            if (password != confirmPassword) {
-                return "Password Didn't Match";
+            if (password !== confirmPassword) {
+                return reply
+                    .code(400)
+                    .send({ success: false, message: "Password Didn't Match" });
             }
 
             const salt = await bcrypt.genSalt(10);
@@ -41,7 +45,9 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             } finally {
                 client.release();
             }
-            return 'Registration Complete';
+            return reply
+                .code(200)
+                .send({ success: true, message: 'Registration Complete' });
         }
     );
 };

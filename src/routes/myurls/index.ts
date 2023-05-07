@@ -11,12 +11,20 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 [userId]
             );
             if (usersUrls.rows[0]) {
-                return usersUrls.rows.map((el) => ({
-                    shortUrl: `${request.protocol}://${request.hostname}/${el.short_url}`,
-                    originalUrl: el.original_url,
-                }));
+                return reply.code(200).send({
+                    success: true,
+                    message: 'Your Urls',
+                    data: usersUrls.rows.map((el) => ({
+                        shortUrl: `${request.protocol}://${request.hostname}/${el.short_url}`,
+                        originalUrl: el.original_url,
+                    })),
+                });
             } else {
-                return "You don't have any URLS";
+                return reply.code(200).send({
+                    success: true,
+                    message: "You don't have any URLS",
+                    data: null,
+                });
             }
         } catch (err) {
             return err;
@@ -33,7 +41,10 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             },
         },
         async function (request, reply) {
-            if (!request.user) return 'Please Login to Delete';
+            if (!request.user)
+                return reply
+                    .code(401)
+                    .send({ success: false, message: 'User is Logged out' });
 
             const url = request.params as MutateLinkDto;
             const shortUrl = url.short;
@@ -46,9 +57,13 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     [shortUrl]
                 );
                 if (deleted.rowCount) {
-                    return 'URL Removed';
+                    return reply
+                        .code(200)
+                        .send({ success: true, message: 'URL Removed' });
                 } else {
-                    return 'URL not found';
+                    return reply
+                        .code(400)
+                        .send({ success: false, message: 'URL not found' });
                 }
             } catch (err) {
                 return err;
@@ -66,7 +81,11 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             },
         },
         async function (request, reply) {
-            if (!request.user) return 'Please Login to Update';
+            if (!request.user)
+                return reply
+                    .code(401)
+                    .send({ success: false, message: 'User is Logged out' });
+
             const url = request.params as MutateLinkDto;
             const shortUrl = url.short;
             const updatedUrl = request.body;
@@ -78,9 +97,13 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     [updatedUrl, shortUrl]
                 );
                 if (updated.rowCount) {
-                    return 'URL Updated';
+                    return reply
+                        .code(200)
+                        .send({ success: true, message: 'URL Updated' });
                 } else {
-                    return 'URL not found';
+                    return reply
+                        .code(400)
+                        .send({ success: false, message: 'URL not found' });
                 }
             } catch (err) {
                 return err;

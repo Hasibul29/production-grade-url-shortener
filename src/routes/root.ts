@@ -1,4 +1,3 @@
-// import { addMonths, format } from 'date-fns';
 import { FastifyPluginAsync } from 'fastify';
 import { nanoid } from 'nanoid/async';
 import {
@@ -40,7 +39,6 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 return reply.code(400).send('Invalid url');
             }
 
-            // const timeLimit = format(addMonths(Date.now(), 2), 'yyyy-MM-dd');
             const client = await fastify.pg.connect();
 
             try {
