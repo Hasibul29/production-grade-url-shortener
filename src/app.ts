@@ -28,6 +28,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
     void fastify.register(fastifySecureSession, {
         key: fs.readFileSync(join(__dirname, 'secret-key')),
+        cookie: { httpOnly: true },
     });
     void fastify.register(fastifyPassport.initialize());
     void fastify.register(fastifyPassport.secureSession());
