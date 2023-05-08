@@ -53,15 +53,35 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             },
         },
         async function (request, reply) {
-            if (!request.user)
+            if (!request.user) {
                 return reply
                     .code(401)
                     .send({ success: false, message: 'User is Logged out' });
+            }
 
             const url = request.params as MutateLinkDto;
             const shortUrl = url.short;
 
-            const client = await fastify.pg.connect();
+            let client = await fastify.pg.connect();
+            try {
+                const userinfo = await client.query(
+                    'select user_id from urls where short_url=$1',
+                    [shortUrl]
+                );
+                const userId = userinfo.rows[0].user_id;
+                if (userId !== request.user) {
+                    return reply.code(401).send({
+                        success: false,
+                        message: 'Unauthorized access',
+                    });
+                }
+            } catch (err) {
+                return err;
+            } finally {
+                client.release();
+            }
+
+            client = await fastify.pg.connect();
 
             try {
                 const deleted = await client.query(
@@ -94,20 +114,42 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             },
         },
         async function (request, reply) {
-            if (!request.user)
+            if (!request.user) {
                 return reply
                     .code(401)
                     .send({ success: false, message: 'User is Logged out' });
+            }
 
             const url = request.params as MutateLinkDto;
             const shortUrl = url.short;
+
+            let client = await fastify.pg.connect();
+            try {
+                const userinfo = await client.query(
+                    'select user_id from urls where short_url=$1',
+                    [shortUrl]
+                );
+                const userId = userinfo.rows[0].user_id;
+                if (userId !== request.user) {
+                    return reply.code(401).send({
+                        success: false,
+                        message: 'Unauthorized access',
+                    });
+                }
+            } catch (err) {
+                return err;
+            } finally {
+                client.release();
+            }
+
             const updatedUrl = request.body as UpdateLinkDto;
-            const client = await fastify.pg.connect();
+            const newShortUrl = updatedUrl.alias;
+            client = await fastify.pg.connect();
 
             try {
                 const updated = await client.query(
                     'update urls set short_url=$1 where short_url=$2',
-                    [updatedUrl, shortUrl]
+                    [newShortUrl, shortUrl]
                 );
                 if (updated.rowCount) {
                     return reply
