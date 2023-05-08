@@ -27,7 +27,7 @@ export const createLinkDtoSchema = {
     type: 'object',
     properties: {
         url: { type: 'string', format: 'url', maxLength: 2048, minLength: 3 },
-        alias: { type: 'string', maxLength: 15, minLength: 1 },
+        alias: { type: 'string', maxLength: 15, minLength: 5 },
     },
     required: ['url'],
     maxProperties: 2,

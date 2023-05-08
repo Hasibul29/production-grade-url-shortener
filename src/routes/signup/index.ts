@@ -40,6 +40,24 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     'insert into users(email,password_hash,password_salt) values ($1, $2, $3)',
                     [email, hashedPassword, salt]
                 );
+                const userInfo = await client.query(
+                    'select user_id from users where email=$1',
+                    [email]
+                );
+                const userId =
+                    userInfo.rowCount === 1 ? userInfo.rows[0].user_id : null;
+
+                if (!userId) {
+                    return reply.code(400).send({
+                        success: false,
+                        message: 'Something is wrong',
+                    });
+                }
+
+                await client.query(
+                    'insert into AccountSecurity(user_id,failed_login_attempts,email_is_verified,role) values($1,$2,$3,$4)',
+                    [userId, 0, false, 'customer']
+                );
             } catch (err) {
                 if ((err as DbError).code === '23505') {
                     return reply.code(400).send({
