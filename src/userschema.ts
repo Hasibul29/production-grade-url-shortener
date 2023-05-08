@@ -54,8 +54,19 @@ export const mutateLinkDtoSchema = {
     additionalProperties: false,
 } as const satisfies JSONSchema;
 
+export const updateLinkDtoSchema = {
+    type: 'object',
+    properties: {
+        alias: createLinkDtoSchema.properties.alias,
+    },
+    required: ['alias'],
+    maxProperties: 1,
+    additionalProperties: false,
+} as const satisfies JSONSchema;
+
 export type CreateUserDto = FromSchema<typeof createUserDtoSchema>;
 export type LoginUserDto = FromSchema<typeof loginUserDtoSchema>;
 export type CreateLinkDto = FromSchema<typeof createLinkDtoSchema>;
 export type GetLinkDto = FromSchema<typeof getLinkDtoSchema>;
 export type MutateLinkDto = FromSchema<typeof mutateLinkDtoSchema>;
+export type UpdateLinkDto = FromSchema<typeof updateLinkDtoSchema>;

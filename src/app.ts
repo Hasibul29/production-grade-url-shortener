@@ -23,7 +23,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 ): Promise<void> => {
     // Place here your custom code!
     void fastify.register(fastifyPostgres, {
-        connectionString: process.env.PASS,
+        connectionString: process.env.DB_SECRET,
     });
 
     void fastify.register(fastifySecureSession, {

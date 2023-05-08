@@ -1,5 +1,10 @@
 import { FastifyPluginAsync } from 'fastify';
-import { MutateLinkDto, mutateLinkDtoSchema } from '../../userschema';
+import {
+    MutateLinkDto,
+    UpdateLinkDto,
+    mutateLinkDtoSchema,
+    updateLinkDtoSchema,
+} from '../../userschema';
 
 const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
@@ -85,6 +90,7 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         {
             schema: {
                 params: mutateLinkDtoSchema,
+                body: updateLinkDtoSchema,
             },
         },
         async function (request, reply) {
@@ -95,7 +101,7 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
             const url = request.params as MutateLinkDto;
             const shortUrl = url.short;
-            const updatedUrl = request.body;
+            const updatedUrl = request.body as UpdateLinkDto;
             const client = await fastify.pg.connect();
 
             try {
