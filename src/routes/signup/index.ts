@@ -2,6 +2,13 @@ import * as bcrypt from 'bcrypt';
 import { FastifyPluginAsync } from 'fastify';
 import { CreateUserDto, createUserDtoSchema } from '../../userschema';
 
+interface DbError {
+    statusCode: string;
+    code: string;
+    error: string;
+    message: string;
+}
+
 const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async function (request, reply) {
         return 'signup here';
@@ -34,7 +41,17 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     [email, hashedPassword, salt]
                 );
             } catch (err) {
-                return err;
+                if ((err as DbError).code === '23505') {
+                    return reply.code(400).send({
+                        success: false,
+                        message: 'This email is already registered',
+                    });
+                } else {
+                    return reply.code(400).send({
+                        success: false,
+                        message: 'Something is wrong',
+                    });
+                }
             } finally {
                 client.release();
             }

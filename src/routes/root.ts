@@ -7,9 +7,16 @@ import {
     getLinkDtoSchema,
 } from '../userschema';
 
+interface DbError {
+    statusCode: string;
+    code: string;
+    error: string;
+    message: string;
+}
+
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async (request, reply) => {
-        return 'Welcome';
+        return reply.code(200).send({ success: true, messgae: 'Welcome' });
     });
 
     fastify.post(
@@ -49,12 +56,26 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     );
                 }
             } catch (err) {
-                return err;
+                if ((err as DbError).code === '23505') {
+                    return reply.code(400).send({
+                        success: false,
+                        message: 'The given alias in taken',
+                    });
+                } else {
+                    return reply.code(400).send({
+                        success: false,
+                        message: 'Something is wrong',
+                    });
+                }
             } finally {
                 client.release();
             }
             const generatedUrl = `${request.protocol}://${request.hostname}${request.url}${key}`;
-            return generatedUrl;
+            return reply.code(200).send({
+                success: true,
+                message: 'Url generated',
+                url: generatedUrl,
+            });
         }
     );
 
@@ -68,7 +89,9 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         async (request, reply) => {
             const id = request.params as GetLinkDto;
             if (!id) {
-                reply.code(400).send('Invalid url');
+                return reply
+                    .code(400)
+                    .send({ success: false, message: 'Invalid url' });
             }
 
             const client = await fastify.pg.connect();
@@ -82,7 +105,9 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                         .original_url as string;
                     return reply.redirect(originalUrl);
                 } else {
-                    return 'Url was not found';
+                    return reply
+                        .code(400)
+                        .send({ success: false, message: 'Url was not found' });
                 }
             } catch (err) {
                 return err;
