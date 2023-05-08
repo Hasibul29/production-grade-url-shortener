@@ -64,9 +64,20 @@ export const updateLinkDtoSchema = {
     additionalProperties: false,
 } as const satisfies JSONSchema;
 
+export const removeUserDtoSchema = {
+    type: 'object',
+    properties: {
+        id: { type: 'number' },
+    },
+    required: ['id'],
+    maxProperties: 1,
+    additionalProperties: false,
+} as const satisfies JSONSchema;
+
 export type CreateUserDto = FromSchema<typeof createUserDtoSchema>;
 export type LoginUserDto = FromSchema<typeof loginUserDtoSchema>;
 export type CreateLinkDto = FromSchema<typeof createLinkDtoSchema>;
 export type GetLinkDto = FromSchema<typeof getLinkDtoSchema>;
 export type MutateLinkDto = FromSchema<typeof mutateLinkDtoSchema>;
 export type UpdateLinkDto = FromSchema<typeof updateLinkDtoSchema>;
+export type removeUserDto = FromSchema<typeof removeUserDtoSchema>;

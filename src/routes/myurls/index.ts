@@ -68,8 +68,13 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     'select user_id from urls where short_url=$1',
                     [shortUrl]
                 );
+                const security = await client.query(
+                    'select role from accountsecurity where user_id=$1',
+                    [request.user]
+                );
                 const userId = userinfo.rows[0].user_id;
-                if (userId !== request.user) {
+                const role = security.rows[0].role;
+                if (userId !== request.user && role !== 'admin') {
                     return reply.code(401).send({
                         success: false,
                         message: 'Unauthorized access',
@@ -129,8 +134,13 @@ const myurls: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                     'select user_id from urls where short_url=$1',
                     [shortUrl]
                 );
+                const security = await client.query(
+                    'select role from accountsecurity where user_id=$1',
+                    [request.user]
+                );
                 const userId = userinfo.rows[0].user_id;
-                if (userId !== request.user) {
+                const role = security.rows[0].role;
+                if (userId !== request.user && role !== 'admin') {
                     return reply.code(401).send({
                         success: false,
                         message: 'Unauthorized access',
