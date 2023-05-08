@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt';
-import * as EmailValidator from 'email-validator';
 import { FastifyPluginAsync } from 'fastify';
 import { CreateUserDto, createUserDtoSchema } from '../../userschema';
 
@@ -17,12 +16,6 @@ const signup: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         async function (request, reply) {
             const { email, password, confirmPassword } =
                 request.body as CreateUserDto;
-
-            if (!EmailValidator.validate(email)) {
-                return reply
-                    .code(400)
-                    .send({ success: false, message: 'Invalid email address' });
-            }
 
             if (password !== confirmPassword) {
                 return reply

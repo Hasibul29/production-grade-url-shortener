@@ -6,7 +6,6 @@ import {
     createLinkDtoSchema,
     getLinkDtoSchema,
 } from '../userschema';
-import isUrl = require('is-url');
 
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/', async (request, reply) => {
@@ -22,7 +21,7 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         },
         async (request, reply) => {
             const givenUrl = request.body as CreateLinkDto;
-            const isValid: boolean = isUrl(givenUrl.url);
+
             let userLoggedIn = false;
             const userId = request.user;
 
@@ -34,10 +33,6 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 givenUrl.alias && userLoggedIn
                     ? givenUrl.alias
                     : await nanoid(5);
-
-            if (!givenUrl.url || !isValid) {
-                return reply.code(400).send('Invalid url');
-            }
 
             const client = await fastify.pg.connect();
 
