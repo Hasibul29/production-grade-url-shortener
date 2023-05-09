@@ -1,6 +1,20 @@
-import { Worker } from 'bullmq';
+import { Queue, Worker } from 'bullmq';
 import { FastifyPluginAsync } from 'fastify';
+const { createBullBoard } = require('@bull-board/api');
+const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
+const { FastifyAdapter } = require('@bull-board/fastify');
+
+export const myQueue = new Queue('url-expire');
+
 export const schedule: FastifyPluginAsync = async (fastify) => {
+    const serverAdapter = new FastifyAdapter();
+    createBullBoard({
+        queues: [new BullMQAdapter(myQueue)],
+        serverAdapter,
+    });
+
+    serverAdapter.setBasePath('/ui');
+    fastify.register(serverAdapter.registerPlugin(), { prefix: '/ui' });
     const worker = new Worker('url-expire', async (job) => {});
     worker.on('completed', async (job) => {
         const client = await fastify.pg.connect();

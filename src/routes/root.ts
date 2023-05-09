@@ -1,14 +1,12 @@
-import { Queue } from 'bullmq';
 import { FastifyPluginAsync } from 'fastify';
 import { nanoid } from 'nanoid/async';
+import { myQueue } from '../schedule';
 import {
     CreateLinkDto,
     GetLinkDto,
     createLinkDtoSchema,
     getLinkDtoSchema,
 } from '../userschema';
-
-const myQueue = new Queue('url-expire');
 interface DbError {
     statusCode: string;
     code: string;
@@ -57,11 +55,7 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                         [key, givenUrl.url]
                     );
                 }
-                myQueue.add(
-                    key,
-                    { key: key },
-                    { delay: 20000, removeOnComplete: true, removeOnFail: true }
-                );
+                myQueue.add(key, { key: key }, { delay: 20000 });
             } catch (err) {
                 if ((err as DbError).code === '23505') {
                     return reply.code(400).send({
