@@ -22,6 +22,12 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.post(
         '/',
         {
+            config: {
+                rateLimit: {
+                    max: 10,
+                    timeWindow: '1 day',
+                },
+            },
             schema: {
                 body: createLinkDtoSchema,
             },
