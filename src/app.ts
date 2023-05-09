@@ -1,4 +1,5 @@
 import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
+import helmet from '@fastify/helmet';
 import fastifyPassport from '@fastify/passport';
 import fastifyPostgres from '@fastify/postgres';
 import rateLimit from '@fastify/rate-limit';
@@ -24,6 +25,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     opts
 ): Promise<void> => {
     // Place here your custom code!
+    void fastify.register(helmet);
     void fastify.register(fastifyPostgres, {
         connectionString: process.env.DB_SECRET,
     });
