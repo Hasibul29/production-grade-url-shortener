@@ -28,12 +28,14 @@
     "@fastify/secure-session": "^6.1.0",
     "@fastify/sensible": "^5.0.0",
     "bcrypt": "^5.1.0",
+    "bullmq": "^3.13.2",
     "dotenv": "^16.0.3",
     "fastify": "^4.17.0",
     "fastify-cli": "^5.7.1",
     "fastify-plugin": "^4.0.0",
     "json-schema-to-ts": "^2.8.0",
     "nanoid": "^3.3.6",
+    "node-cron": "^3.0.2",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.10.0"
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/node": "^18.0.0",
+    "@types/node-cron": "^3.0.7",
     "@types/passport-local": "^1.0.35",
     "@types/pg": "^8.6.6",
     "@types/tap": "^15.0.5",

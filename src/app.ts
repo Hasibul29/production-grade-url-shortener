@@ -7,6 +7,7 @@ import { FastifyPluginAsync } from 'fastify';
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import { configurePassport } from './passport';
+import { schedule } from './schedule';
 
 dotenv.config();
 
@@ -35,7 +36,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
     // pasport strategy
     configurePassport(fastify, opts);
-
+    schedule(fastify, opts);
     // ... and then a deserializer that will fetch that user from the database when a request with an id in the session arrives
     // fastifyPassport.registerUserDeserializer(async (id, request) => {
     // return await User.findById(id);
