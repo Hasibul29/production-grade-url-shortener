@@ -8,8 +8,8 @@ import { FastifyPluginAsync } from 'fastify';
 dotenv.config();
 export const myQueue = new Queue('url-expire', {
     connection: {
-        host: 'localhost',
-        port: 6379,
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
     },
 });
 
@@ -22,7 +22,7 @@ export const schedule: FastifyPluginAsync = async (fastify) => {
     serverAdapter.setBasePath('/ui');
     fastify.register(serverAdapter.registerPlugin(), {
         prefix: '/ui',
-        basePath: 'ui',
+        basePath: '/ui',
     });
     const worker = new Worker('url-expire', async (job) => {}, {
         connection: {
