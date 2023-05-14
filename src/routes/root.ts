@@ -26,12 +26,13 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.post(
         '/',
         {
-            config: {
-                rateLimit: {
-                    max: 10,
-                    timeWindow: '1 day',
+            preHandler: fastify.rateLimit({
+                max: async (request, key) => {
+                    if (request.user) return 10;
+                    return 5;
                 },
-            },
+                timeWindow: '1 day',
+            }),
             schema: {
                 body: createLinkDtoSchema,
             },
@@ -59,13 +60,13 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                         'insert into urls(user_id,short_url,original_url) values($1,$2,$3)',
                         [userId, key, givenUrl.url]
                     );
+                    myQueue.add(key, { key: key }, { delay: 20000 });
                 } else {
                     await client.query(
                         'insert into urls(short_url,original_url) values($1,$2)',
                         [key, givenUrl.url]
                     );
                 }
-                myQueue.add(key, { key: key }, { delay: 20000 });
             } catch (err) {
                 if ((err as DbError).code === '23505') {
                     return reply.code(400).send({

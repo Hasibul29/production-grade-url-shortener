@@ -6,7 +6,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 export const configurePassport: FastifyPluginAsync = async (fastify) => {
     fastifyPassport.registerUserSerializer(async (user, request) => user);
     fastifyPassport.registerUserDeserializer(async (user, request) => {
-        return await user;
+        return user;
     });
 
     fastifyPassport.use(

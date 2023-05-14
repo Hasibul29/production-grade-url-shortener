@@ -41,8 +41,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
     configurePassport(fastify, opts);
     schedule(fastify, opts);
     await fastify.register(rateLimit, {
-        max: 100,
-        timeWindow: '1 minute',
+        max: 5,
+        timeWindow: '10 minute',
+        hook: 'preHandler',
+        keyGenerator: async (request) => {
+            return request.user ? (request.user as number) : request.ip;
+        },
     });
     fastify.setNotFoundHandler(
         {
@@ -56,10 +60,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
         }
     );
 
-    // ... and then a deserializer that will fetch that user from the database when a request with an id in the session arrives
-    // fastifyPassport.registerUserDeserializer(async (id, request) => {
-    // return await User.findById(id);
-    // });
     // Do not touch the following lines
 
     // This loads all plugins defined in plugins
