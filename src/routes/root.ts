@@ -56,11 +56,14 @@ const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
             try {
                 if (userLoggedIn) {
+                    const delay = givenUrl.limit;
                     await client.query(
                         'insert into urls(user_id,short_url,original_url) values($1,$2,$3)',
                         [userId, key, givenUrl.url]
                     );
-                    myQueue.add(key, { key: key }, { delay: 20000 });
+                    if (delay) {
+                        myQueue.add(key, { key: key }, { delay: delay * 1000 });
+                    }
                 } else {
                     await client.query(
                         'insert into urls(short_url,original_url) values($1,$2)',

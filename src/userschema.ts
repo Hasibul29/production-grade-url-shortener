@@ -28,9 +28,10 @@ export const createLinkDtoSchema = {
     properties: {
         url: { type: 'string', format: 'url', maxLength: 2048, minLength: 3 },
         alias: { type: 'string', maxLength: 15, minLength: 5 },
+        limit: { type: 'number', description: 'time in seconds' },
     },
     required: ['url'],
-    maxProperties: 2,
+    maxProperties: 3,
     additionalProperties: false,
 } as const satisfies JSONSchema;
 
