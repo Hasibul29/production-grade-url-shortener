@@ -41,7 +41,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     configurePassport(fastify, opts);
     schedule(fastify, opts);
     await fastify.register(rateLimit, {
-        max: 5,
+        max: 10,
         timeWindow: '10 minute',
         hook: 'preHandler',
         keyGenerator: async (request) => {

@@ -27,7 +27,7 @@ const admin: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         client = await fastify.pg.connect();
         try {
             const userData = await client.query(
-                'select * from users where user_id NOT IN (select user_id from accountsecurity where role=$1)',
+                'select user_id,email from users where user_id NOT IN (select user_id from accountsecurity where role=$1)',
                 ['admin']
             );
             return userData.rows.map((el, ind) => {
