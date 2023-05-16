@@ -3,15 +3,15 @@
 - [x] **URL Shortening**: The core functionality of the microservice should be to generate short URLs from long ones. Both anonymous and authenticated users can create short URLs. Only authenticated users can update and delete their own short URLs.
 - [x] **Redirect**: Short URLs should redirect to the corresponding long URLs when clicked.
 - [x] **Authentication**: Authenticate users to restrict access to certain endpoints and features, such as Custom Alias, Expiration, Analytics and Blacklist.
-- [ ] **Authorization**: Restrict access to certain endpoints based on user roles or permissions. For example, the users with admin role can delete any short URL but a normal user cannot delete other users URLs.
+- [x] **Authorization**: Restrict access to certain endpoints based on user roles or permissions. For example, the users with admin role can delete any short URL but a normal user cannot delete other users URLs.
 - [x] **Custom Alias**: Authenticated (logged-in) users should be able to choose a custom alias for their short URLs.
-- [ ] **URL Expiration**: Ability to set an expiration date for a short URL, after which it will no longer redirect. This feature is exclusive to authenticated users.
+- [x] **URL Expiration**: Ability to set an expiration date for a short URL, after which it will no longer redirect. This feature is exclusive to authenticated users.
 - [ ] **Analytics**: Tracking clicks and other related data, such as HTTP Referrer, Query Parameters, Geo Country etc. for each short URL, exclusive to authenticated users.
-- [ ] **Rate Limiting**: Limiting the number of requests from a single IP address to prevent abuse. Implement both simple windowed per hour rate-limit as well as exponential back-off strategy. Increase the rate-limit for authenticated users.
+- [x] **Rate Limiting**: Limiting the number of requests from a single IP address to prevent abuse. Implement both simple windowed per hour rate-limit as well as exponential back-off strategy. Increase the rate-limit for authenticated users.
 - [ ] **Blacklist**: Ability to blacklist certain URLs or IP addresses to prevent spam and abuse. Implement both global (set by admin) blacklist and user-set blacklist.
 - [ ] **Logging**: Log all requests and responses for debugging and analysis purposes.
 - [ ] **OpenAPI Spec**: Generate an OpenAPI specification for the API to document the endpoints, parameters, and responses.
-- [ ] **JSON Validation**: Validate all input and output using JSON Schema to ensure consistency and prevent errors.
+- [x] **JSON Validation**: Validate all input and output using JSON Schema to ensure consistency and prevent errors.
 - [ ] **Security**: Implement various security measures, including:
     - SSL/TLS encryption to secure data in transit
     - Hashing and salting passwords
